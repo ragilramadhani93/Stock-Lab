@@ -10,7 +10,8 @@ import {
   CheckCircle2,
   AlertCircle,
   Eye,
-  Info
+  Info,
+  Zap
 } from 'lucide-react';
 
 interface OpportunityMatrixViewProps {
@@ -53,16 +54,16 @@ export const OpportunityMatrixView: React.FC<OpportunityMatrixViewProps> = ({
   return (
     <div className="space-y-6">
       {/* View Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-neutral-800">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800/80">
         <div>
           <div className="flex items-center gap-2">
-            <h2 className="text-xl font-bold text-white tracking-tight">Opportunity Matrix & Demand Signals</h2>
-            <span className="text-xs font-mono text-neutral-400 tabular-nums">
-              ({opportunities.length} evaluated)
+            <h2 className="text-xl font-bold text-white tracking-tight">Matriks Peluang &amp; Sinyal Pasar</h2>
+            <span className="text-xs font-mono text-slate-400 tabular-nums">
+              ({opportunities.length} topik dievaluasi)
             </span>
           </div>
-          <p className="text-xs text-neutral-400 mt-1">
-            Multivariate ranking based on search volume, commercial utility, and market saturation risk.
+          <p className="text-xs text-slate-400 mt-1">
+            Peringkat multivariat berdasarkan volume pencarian riil, kegunaan komersial, dan risiko kejenuhan.
           </p>
         </div>
 
@@ -71,9 +72,9 @@ export const OpportunityMatrixView: React.FC<OpportunityMatrixViewProps> = ({
           <select
             value={filterTrend}
             onChange={e => setFilterTrend(e.target.value)}
-            className="rounded-lg border border-neutral-800 bg-neutral-900 px-3 py-1.5 text-neutral-300 focus:outline-none focus:border-indigo-500"
+            className="rounded-xl border border-slate-800 bg-slate-900 px-3 py-1.5 text-slate-300 focus:outline-none focus:border-indigo-500 cursor-pointer"
           >
-            <option value="ALL">All Trend Types</option>
+            <option value="ALL">Semua Tipe Trend</option>
             <option value="evergreen">Evergreen Demand</option>
             <option value="emerging">Emerging Trend</option>
             <option value="gap">Market Gap</option>
@@ -83,9 +84,9 @@ export const OpportunityMatrixView: React.FC<OpportunityMatrixViewProps> = ({
           <select
             value={filterRisk}
             onChange={e => setFilterRisk(e.target.value)}
-            className="rounded-lg border border-neutral-800 bg-neutral-900 px-3 py-1.5 text-neutral-300 focus:outline-none focus:border-indigo-500"
+            className="rounded-xl border border-slate-800 bg-slate-900 px-3 py-1.5 text-slate-300 focus:outline-none focus:border-indigo-500 cursor-pointer"
           >
-            <option value="ALL">All Saturation Risks</option>
+            <option value="ALL">Semua Risiko Saturasi</option>
             <option value="low">Low Saturation Risk</option>
             <option value="medium">Medium Saturation Risk</option>
             <option value="high">High Saturation Risk</option>
@@ -94,81 +95,92 @@ export const OpportunityMatrixView: React.FC<OpportunityMatrixViewProps> = ({
           <select
             value={sortBy}
             onChange={e => setSortBy(e.target.value as any)}
-            className="rounded-lg border border-neutral-800 bg-neutral-900 px-3 py-1.5 text-neutral-300 focus:outline-none focus:border-indigo-500 font-medium"
+            className="rounded-xl border border-slate-800 bg-slate-900 px-3 py-1.5 text-slate-300 focus:outline-none focus:border-indigo-500 font-semibold cursor-pointer"
           >
-            <option value="score">Sort by Opportunity Score</option>
-            <option value="demand">Sort by Buyer Demand</option>
-            <option value="competition">Sort by Low Competition</option>
+            <option value="score">Urutkan: Skor Peluang</option>
+            <option value="demand">Urutkan: Demand Pembeli</option>
+            <option value="competition">Urutkan: Kompetisi Terendah</option>
           </select>
         </div>
       </div>
 
-      {/* Grid of Opportunity Cards */}
+      {/* Opportunities Grid */}
       {filtered.length === 0 ? (
-        <div className="rounded-xl border border-neutral-800 bg-neutral-900/30 p-12 text-center text-xs text-neutral-500">
-          No opportunities match the selected filters.
+        <div className="rounded-2xl border border-slate-800/80 bg-[#0E1424]/60 p-12 text-center space-y-3">
+          <AlertCircle className="w-8 h-8 text-slate-600 mx-auto" />
+          <h3 className="text-sm font-semibold text-slate-300">Tidak ada topik yang sesuai filter</h3>
+          <p className="text-xs text-slate-500">
+            Coba ubah filter trend atau risiko saturasi di atas.
+          </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {filtered.map(opp => {
             const isWorking = processingId === opp.id;
             return (
               <div
                 key={opp.id}
-                className="rounded-xl border border-neutral-800 bg-neutral-900/60 p-5 flex flex-col justify-between space-y-4 hover:border-neutral-700 transition-colors"
+                className="rounded-2xl border border-slate-800/80 bg-[#0E1424]/90 p-5 space-y-4 hover:border-slate-700/80 transition-all flex flex-col justify-between shadow-md"
               >
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between text-xs text-neutral-400">
-                    <span className="font-semibold text-indigo-400 uppercase tracking-wider">{opp.contentType}</span>
-                    <span className="capitalize text-emerald-400 font-medium">{opp.trendType}</span>
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                      {opp.trendType.replace('_', ' ')}
+                    </span>
+                    <span className="text-[11px] font-mono text-slate-400">
+                      Kompetisi: <strong className="text-white">{opp.competitionScore}/100</strong>
+                    </span>
                   </div>
 
-                  <h3 className="text-sm font-semibold text-white leading-snug line-clamp-2">
-                    {opp.topic}
-                  </h3>
+                  <div>
+                    <h3 className="text-base font-bold text-white line-clamp-1">{opp.topic}</h3>
+                    <p className="text-xs text-slate-400 line-clamp-2 mt-0.5">{opp.whyThisTopic}</p>
+                  </div>
 
                   <OpportunityScoreCard
                     score={opp.opportunityScore}
                     competitionScore={opp.competitionScore}
                     saturationRisk={opp.saturationRisk}
                     commercialPotential={opp.commercialPotential}
-                    compact={true}
+                    compact
                   />
 
-                  {/* Market Gap snippet */}
-                  <div className="rounded-lg border border-neutral-800 bg-neutral-950 p-2.5 space-y-1 text-xs">
-                    <span className="text-neutral-400 font-medium text-[11px] block">Commercial Gap:</span>
-                    <p className="text-neutral-300 text-[11px] line-clamp-2 leading-relaxed">
+                  {/* Market Gap Mini Card */}
+                  <div className="p-3 rounded-xl bg-slate-950/70 border border-slate-800/80 text-xs space-y-1.5">
+                    <div className="text-[11px] text-emerald-400 font-semibold flex items-center gap-1">
+                      <TrendingUp className="w-3.5 h-3.5" />
+                      <span>Celah Komersial:</span>
+                    </div>
+                    <p className="text-slate-300 text-xs line-clamp-2">
                       {opp.marketGap.missingAngle}
                     </p>
                   </div>
                 </div>
 
-                {/* Card Actions */}
-                <div className="pt-3 border-t border-neutral-800 flex items-center justify-between gap-2">
+                {/* Card footer actions */}
+                <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between gap-2">
                   <button
                     onClick={() => onInspectOpportunity(opp)}
-                    className="p-2 rounded-lg border border-neutral-800 hover:bg-neutral-800 text-neutral-300 hover:text-white transition-colors"
-                    title="Inspect Opportunity Details"
+                    className="text-xs font-semibold text-slate-300 hover:text-white flex items-center gap-1 cursor-pointer"
                   >
-                    <Eye className="w-4 h-4" />
+                    <Eye className="w-3.5 h-3.5 text-slate-400" />
+                    <span>Detail Strategi</span>
                   </button>
 
                   <button
                     onClick={() => handleMakeAsset(opp, true)}
                     disabled={isWorking}
-                    className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 text-xs font-semibold rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm transition-colors disabled:opacity-50"
-                    title="Buat Prompt Pack & Metadata ($0 Biaya Gambar)"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white text-xs font-bold transition-all cursor-pointer disabled:opacity-50"
                   >
                     {isWorking ? (
                       <>
-                        <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                         <span>Menyusun Prompt...</span>
                       </>
                     ) : (
                       <>
-                        <Sparkles className="w-3.5 h-3.5" />
-                        <span>BUAT PROMPT PACK</span>
+                        <Zap className="w-3.5 h-3.5 fill-current" />
+                        <span>Buat Prompt Dossier</span>
                       </>
                     )}
                   </button>

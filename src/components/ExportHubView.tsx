@@ -90,113 +90,99 @@ export const ExportHubView: React.FC<ExportHubViewProps> = ({
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-neutral-800">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800/80">
         <div>
           <div className="flex items-center gap-2">
-            <h2 className="text-xl font-bold text-white tracking-tight">Export Hub & Submission Packager</h2>
-            <span className="text-xs font-mono text-neutral-400 tabular-nums">
-              ({readyAssets.length} prompt/asset packs ready / {assets.length} total)
+            <h2 className="text-xl font-bold text-white tracking-tight">Export Hub &amp; Submission Packager</h2>
+            <span className="text-xs font-mono text-slate-400 tabular-nums">
+              ({readyAssets.length} aset siap kirim / {assets.length} total)
             </span>
           </div>
-          <p className="text-xs text-neutral-400 mt-1">
-            Produce certified RFC 4180 CSV metadata files formatted precisely to Adobe Stock and Shutterstock specifications.
+          <p className="text-xs text-slate-400 mt-1">
+            Unduh CSV standar RFC 4180 siap upload ke Adobe Stock Contributor Portal &amp; Shutterstock CSV Batch.
           </p>
         </div>
 
+        {/* Master 1-Click ZIP Download */}
         <button
           onClick={handleDownloadZip}
           disabled={isZipping || readyAssets.length === 0}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-sm transition-colors disabled:opacity-50"
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-cyan-500 hover:from-indigo-500 hover:to-cyan-400 text-white text-xs font-bold shadow-lg shadow-indigo-600/20 transition-all cursor-pointer disabled:opacity-50 active:scale-97"
         >
           {isZipping ? (
             <>
-              <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              <span>Packaging ZIP...</span>
+              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              <span>Mengompresi Paket ZIP...</span>
             </>
           ) : (
             <>
               <FolderArchive className="w-4 h-4" />
-              <span>Download Complete ZIP Bundle ({readyAssets.length} Assets)</span>
+              <span>Download Paket ZIP Lengkap</span>
             </>
           )}
         </button>
       </div>
 
-      {/* 5 Platform Export Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 text-xs">
-        {[
-          { id: 'prompts', name: '⚡ Prompt Pack CSV', desc: 'Midjourney, Flux, SD commands + negative prompt & copy space', fn: () => downloadTextFile(promptsCsv, 'prompts_and_generators.csv') },
-          { id: 'adobe', name: 'Adobe Stock CSV', desc: 'Title ≤70 chars · First 10 priority keywords · Generative AI flagged', fn: () => downloadTextFile(adobeCsv, 'adobe_stock_metadata.csv') },
-          { id: 'shutterstock', name: 'Shutterstock CSV', desc: 'Descriptive natural English sentence · 7-50 keywords · Vector flagged', fn: () => downloadTextFile(shutterCsv, 'shutterstock_metadata.csv') },
-          { id: 'master', name: 'Master Metadata CSV', desc: 'Full unified schema with layered keywords & opportunity scores', fn: () => downloadTextFile(masterCsv, 'metadata_master.csv') },
-          { id: 'audit', name: 'Compliance Audit CSV', desc: 'People anatomy, typography, similarity %, IP risk evaluation', fn: () => downloadTextFile(auditCsv, 'quality_audit_report.csv') }
-        ].map(card => (
-          <div
-            key={card.id}
-            className={`p-4 rounded-xl border transition-all flex flex-col justify-between space-y-3 ${
-              activeTab === card.id
-                ? 'border-indigo-500/50 bg-indigo-600/10'
-                : 'border-neutral-800 bg-neutral-900/50 hover:border-neutral-700'
-            }`}
-          >
-            <div className="space-y-1">
-              <h4 className="font-semibold text-white">{card.name}</h4>
-              <p className="text-[11px] text-neutral-400 leading-relaxed">{card.desc}</p>
-            </div>
-            <div className="flex items-center gap-2 pt-2 border-t border-neutral-800/80">
+      {/* CSV Tabs and Live Preview Panel */}
+      <div className="rounded-2xl border border-slate-800/80 bg-[#0E1424]/90 overflow-hidden shadow-lg">
+        {/* Navigation Tabs */}
+        <div className="flex flex-wrap items-center justify-between gap-2 p-3 bg-slate-950/80 border-b border-slate-800/80">
+          <div className="flex flex-wrap items-center gap-1">
+            {[
+              { id: 'prompts', label: '⚡ Master Prompts CSV' },
+              { id: 'adobe', label: 'Adobe Stock CSV' },
+              { id: 'shutterstock', label: 'Shutterstock CSV' },
+              { id: 'master', label: 'Master Universal CSV' },
+              { id: 'audit', label: 'Laporan Audit Kualitas' }
+            ].map(tab => (
               <button
-                onClick={() => setActiveTab(card.id as any)}
-                className={`flex-1 py-1.5 rounded text-[11px] font-medium transition-colors ${
-                  activeTab === card.id ? 'bg-indigo-600 text-white' : 'bg-neutral-800 text-neutral-300 hover:text-white'
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                  activeTab === tab.id
+                    ? 'bg-slate-800 text-white border border-slate-700 shadow-sm'
+                    : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
-                Preview CSV
+                {tab.label}
               </button>
-              <button
-                onClick={card.fn}
-                className="p-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 hover:text-white transition-colors"
-                title="Download CSV"
-              >
-                <Download className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* CSV Live Preview Window */}
-      <div className="rounded-xl border border-neutral-800 bg-neutral-900/60 p-5 space-y-3">
-        <div className="flex items-center justify-between pb-2 border-b border-neutral-800 text-xs">
-          <div className="flex items-center gap-2">
-            <FileSpreadsheet className="w-4 h-4 text-indigo-400" />
-            <span className="font-semibold text-white capitalize">{activeTab} Metadata CSV Preview</span>
+            ))}
           </div>
 
           <div className="flex items-center gap-2">
             <button
               onClick={handleCopyCurrent}
-              className="text-neutral-400 hover:text-indigo-400 flex items-center gap-1 transition-colors"
+              className="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
             >
-              {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-              <span>{copied ? 'Copied CSV' : 'Copy CSV'}</span>
+              {copied ? (
+                <>
+                  <Check className="w-3.5 h-3.5 text-emerald-400" />
+                  <span className="text-emerald-400">Tersalin!</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="w-3.5 h-3.5" />
+                  <span>Salin CSV</span>
+                </>
+              )}
             </button>
+
             <button
-              onClick={() => {
-                if (activeTab === 'adobe') downloadTextFile(adobeCsv, 'adobe_stock_metadata.csv');
-                else if (activeTab === 'shutterstock') downloadTextFile(shutterCsv, 'shutterstock_metadata.csv');
-                else if (activeTab === 'master') downloadTextFile(masterCsv, 'metadata_master.csv');
-                else downloadTextFile(auditCsv, 'quality_audit_report.csv');
-              }}
-              className="px-3 py-1 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-200 hover:text-white font-medium transition-colors"
+              onClick={() => downloadTextFile(getCurrentCsv(), `${activeTab}_metadata_${Date.now()}.csv`)}
+              className="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
             >
-              Download
+              <Download className="w-3.5 h-3.5" />
+              <span>Download File CSV</span>
             </button>
           </div>
         </div>
 
-        <pre className="h-64 rounded-lg border border-neutral-800 bg-neutral-950 p-4 font-mono text-[11px] text-neutral-300 overflow-x-auto overflow-y-auto leading-relaxed select-all">
-          {getCurrentCsv()}
-        </pre>
+        {/* Live Code / CSV Viewer */}
+        <div className="p-4 bg-slate-950 overflow-x-auto">
+          <pre className="font-mono text-xs text-slate-300 leading-relaxed whitespace-pre font-light select-all">
+            {getCurrentCsv()}
+          </pre>
+        </div>
       </div>
     </div>
   );

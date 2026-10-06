@@ -6,8 +6,8 @@ import {
   Layers,
   Search,
   CheckCircle2,
-  SlidersHorizontal,
-  DollarSign
+  DollarSign,
+  Rocket
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -16,6 +16,7 @@ interface HeaderProps {
   onOpenBatch: () => void;
   onOpenCostTracker: () => void;
   onOpenExport: () => void;
+  onOpenVercelDeploy: () => void;
   simpleMode: boolean;
   setSimpleMode: (val: boolean) => void;
   promptOnlyMode: boolean;
@@ -30,144 +31,141 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenBatch,
   onOpenCostTracker,
   onOpenExport,
-  simpleMode,
-  setSimpleMode,
+  onOpenVercelDeploy,
   promptOnlyMode,
   setPromptOnlyMode,
   totalAssets,
   readyAssets
 }) => {
   return (
-    <header className="sticky top-0 z-30 border-b border-neutral-800 bg-neutral-950/90 backdrop-blur-md px-6 py-3.5">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
-        {/* Zone 1: Single text wordmark */}
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
-            <Sparkles className="w-4 h-4" />
+    <header className="sticky top-0 z-40 border-b border-slate-800/80 bg-[#090D18]/90 backdrop-blur-xl px-4 sm:px-6 py-3 shadow-sm shadow-black/40">
+      <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
+        {/* Zone 1: Logo & Branding */}
+        <div className="flex items-center gap-3 shrink-0">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-cyan-400 p-[1px] shadow-sm shadow-indigo-500/20">
+            <div className="w-full h-full bg-[#0B0F1C] rounded-[11px] flex items-center justify-center">
+              <Sparkles className="w-4 h-4 text-indigo-400" />
+            </div>
           </div>
           <div>
-            <span className="text-base font-semibold tracking-tight text-white block leading-none">
-              Microstock Asset Lab
-            </span>
-            <span className="text-xs text-neutral-400 mt-1 block">
-              Commercial Research · Stock-Safe Engine · Adobe & Shutterstock Exporter
+            <div className="flex items-center gap-2">
+              <span className="text-base font-extrabold tracking-tight text-white block">
+                Microstock Asset Lab
+              </span>
+              <span className="hidden sm:inline-block text-[10px] uppercase tracking-wider font-bold px-1.5 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                STUDIO PRO
+              </span>
+            </div>
+            <span className="text-[11px] text-slate-400 block leading-tight">
+              Research · Opportunity Scoring · Commercial Prompt Engine
             </span>
           </div>
         </div>
 
-        {/* Zone 2: Navigation Links */}
-        <nav className="hidden lg:flex items-center gap-1 bg-neutral-900/80 p-1 rounded-lg border border-neutral-800">
-          <button
-            onClick={() => setActiveTab('research')}
-            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap flex items-center gap-1.5 ${
-              activeTab === 'research'
-                ? 'bg-neutral-800 text-white shadow-sm'
-                : 'text-neutral-400 hover:text-neutral-200'
-            }`}
-          >
-            <Search className="w-3.5 h-3.5" />
-            Research & Demand
-          </button>
-          <button
-            onClick={() => setActiveTab('opportunities')}
-            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap flex items-center gap-1.5 ${
-              activeTab === 'opportunities'
-                ? 'bg-neutral-800 text-white shadow-sm'
-                : 'text-neutral-400 hover:text-neutral-200'
-            }`}
-          >
-            <Zap className="w-3.5 h-3.5" />
-            Opportunity Matrix
-          </button>
-          <button
-            onClick={() => setActiveTab('assets')}
-            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap flex items-center gap-1.5 ${
-              activeTab === 'assets'
-                ? 'bg-neutral-800 text-white shadow-sm'
-                : 'text-neutral-400 hover:text-neutral-200'
-            }`}
-          >
-            <Layers className="w-3.5 h-3.5" />
-            Asset Studio ({totalAssets})
-          </button>
-          <button
-            onClick={() => setActiveTab('qc')}
-            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap flex items-center gap-1.5 ${
-              activeTab === 'qc'
-                ? 'bg-neutral-800 text-white shadow-sm'
-                : 'text-neutral-400 hover:text-neutral-200'
-            }`}
-          >
-            <CheckCircle2 className="w-3.5 h-3.5" />
-            QC & IP Compliance
-          </button>
-          <button
-            onClick={() => setActiveTab('export')}
-            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap flex items-center gap-1.5 ${
-              activeTab === 'export'
-                ? 'bg-neutral-800 text-white shadow-sm'
-                : 'text-neutral-400 hover:text-neutral-200'
-            }`}
-          >
-            <FolderDown className="w-3.5 h-3.5" />
-            Export Hub ({readyAssets})
-          </button>
+        {/* Zone 2: Navigation Tabs */}
+        <nav className="hidden lg:flex items-center gap-1 bg-slate-900/90 p-1 rounded-xl border border-slate-800/80 shadow-inner">
+          {[
+            { id: 'research', label: 'Riset & Demand', icon: Search },
+            { id: 'opportunities', label: 'Matriks Peluang', icon: Zap },
+            { id: 'assets', label: `Koleksi Aset (${totalAssets})`, icon: Layers },
+            { id: 'qc', label: 'QC & Audit IP', icon: CheckCircle2 },
+            { id: 'export', label: `Export Hub (${readyAssets})`, icon: FolderDown }
+          ].map(tab => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)}
+                className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all duration-150 whitespace-nowrap flex items-center gap-1.5 cursor-pointer ${
+                  isActive
+                    ? 'bg-slate-800 text-white shadow-sm border border-slate-700/80'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
+                }`}
+              >
+                <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-indigo-400' : 'text-slate-500'}`} />
+                <span>{tab.label}</span>
+              </button>
+            );
+          })}
         </nav>
 
         {/* Zone 3: Primary Actions */}
-        <div className="flex items-center gap-2.5">
-          {/* Mode Hemat: Prompt Only Toggle */}
+        <div className="flex items-center gap-2 shrink-0">
+          {/* Mode Hemat Toggle (Cost Saver prompt-only) */}
           <button
             onClick={() => setPromptOnlyMode(!promptOnlyMode)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border transition-all ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl border transition-all cursor-pointer ${
               promptOnlyMode
-                ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300 shadow-sm'
-                : 'bg-neutral-900 border-neutral-800 text-neutral-400 hover:text-neutral-200'
+                ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/20 shadow-sm shadow-emerald-500/10'
+                : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-white hover:border-slate-700'
             }`}
-            title="Mode Hemat: Output berupa Prompt & Metadata (Tanpa generate gambar untuk hemat biaya)"
+            title="Klik untuk mengubah: Mode Hemat Prompt (tanpa render gambar) vs Render Visual Langsung"
           >
-            <Zap className={`w-3.5 h-3.5 ${promptOnlyMode ? 'text-emerald-400 fill-current' : 'text-neutral-400'}`} />
-            <span className="font-semibold">{promptOnlyMode ? 'Mode Hemat: Prompt Saja' : 'Render Gambar'}</span>
+            <span className={`w-2 h-2 rounded-full ${promptOnlyMode ? 'bg-emerald-400 animate-pulse' : 'bg-slate-600'}`} />
+            <span className="hidden sm:inline">{promptOnlyMode ? 'Mode Hemat: Prompt Saja' : 'Render Visual'}</span>
+            <span className="sm:hidden">{promptOnlyMode ? 'Hemat' : 'Visual'}</span>
           </button>
 
-          {/* Mode Toggle */}
+          {/* Vercel Deploy Guide Button */}
           <button
-            onClick={() => setSimpleMode(!simpleMode)}
-            className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-lg border border-neutral-800 bg-neutral-900 text-neutral-300 hover:border-neutral-700 transition-colors"
-            title="Toggle between Quick 1-Click Mode and Pro Studio Mode"
+            onClick={onOpenVercelDeploy}
+            className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-xl border border-slate-800 bg-slate-900/80 text-slate-300 hover:text-white hover:border-slate-700 transition-colors cursor-pointer"
+            title="Buka panduan persiapan deploy ke Vercel"
           >
-            <SlidersHorizontal className="w-3.5 h-3.5 text-indigo-400" />
-            <span>{simpleMode ? 'Simple Mode' : 'Pro Studio'}</span>
+            <span className="text-[11px] font-bold">▲</span>
+            <span className="hidden md:inline">Deploy Vercel</span>
           </button>
 
-          {/* Cost Tracker */}
+          {/* Cost Tracker Preview */}
           <button
             onClick={onOpenCostTracker}
-            className="flex items-center gap-1 px-2.5 py-1.5 text-xs font-mono text-neutral-400 bg-neutral-900 border border-neutral-800 rounded-lg hover:text-neutral-200 transition-colors tabular-nums"
-            title="Estimated AI generation cost"
+            className="hidden sm:flex items-center gap-1 px-2.5 py-1.5 text-xs font-mono text-slate-300 bg-slate-900/80 border border-slate-800 rounded-xl hover:border-slate-700 hover:text-white transition-colors tabular-nums cursor-pointer"
+            title="Lihat Telemetri Biaya & Penghematan Token"
           >
             <DollarSign className="w-3.5 h-3.5 text-emerald-400" />
             <span>${promptOnlyMode ? '0.0003' : '0.024'}</span>
           </button>
 
-          {/* Batch Production Queue */}
-          <button
-            onClick={onOpenBatch}
-            className="hidden md:flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-neutral-800 bg-neutral-900 text-neutral-200 hover:bg-neutral-800 transition-colors"
-          >
-            <span>Batch Queue</span>
-          </button>
-
           {/* Export Bundle Modal Trigger */}
           <button
             onClick={onOpenExport}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm transition-colors whitespace-nowrap"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white shadow-md shadow-indigo-600/20 transition-all cursor-pointer whitespace-nowrap active:scale-97"
           >
             <FolderDown className="w-3.5 h-3.5" />
-            <span>Export CSV & ZIP</span>
+            <span className="hidden sm:inline">Export CSV</span>
+            <span className="sm:hidden">Export</span>
           </button>
         </div>
       </div>
+
+      {/* Mobile Navigation bar */}
+      <nav className="flex lg:hidden items-center gap-1 mt-2.5 pt-2 border-t border-slate-800/80 overflow-x-auto pb-1 text-xs">
+        {[
+          { id: 'research', label: 'Riset', icon: Search },
+          { id: 'opportunities', label: 'Peluang', icon: Zap },
+          { id: 'assets', label: `Aset (${totalAssets})`, icon: Layers },
+          { id: 'qc', label: 'QC', icon: CheckCircle2 },
+          { id: 'export', label: `Export (${readyAssets})`, icon: FolderDown }
+        ].map(tab => {
+          const Icon = tab.icon;
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as any)}
+              className={`px-3 py-1.5 rounded-lg whitespace-nowrap flex items-center gap-1 font-semibold ${
+                isActive
+                  ? 'bg-slate-800 text-white border border-slate-700'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Icon className="w-3.5 h-3.5" />
+              <span>{tab.label}</span>
+            </button>
+          );
+        })}
+      </nav>
     </header>
   );
 };

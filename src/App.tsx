@@ -31,6 +31,7 @@ import { VariationModal, VariationOptions } from './components/VariationModal';
 import { ExportModal } from './components/ExportModal';
 import { BatchQueueModal } from './components/BatchQueueModal';
 import { CostTrackerModal } from './components/CostTrackerModal';
+import { VercelDeployModal } from './components/VercelDeployModal';
 
 export default function App() {
   const [opportunities, setOpportunities] = useState<ResearchOpportunity[]>([]);
@@ -49,6 +50,7 @@ export default function App() {
   const [isExportModalOpen, setIsExportModalOpen] = useState<boolean>(false);
   const [isBatchModalOpen, setIsBatchModalOpen] = useState<boolean>(false);
   const [isCostTrackerOpen, setIsCostTrackerOpen] = useState<boolean>(false);
+  const [isVercelModalOpen, setIsVercelModalOpen] = useState<boolean>(false);
 
   // Toast feedback
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -281,10 +283,10 @@ export default function App() {
     }
   };
 
-  const readyAssets = assets.filter(a => a.status === 'READY');
+  const readyAssets = assets.filter(a => a.status === 'READY' || a.status === 'PROMPT_READY');
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col font-sans selection:bg-indigo-500/30 selection:text-indigo-200">
+    <div className="min-h-screen bg-[#080C16] text-slate-100 flex flex-col font-sans selection:bg-indigo-500/30 selection:text-indigo-200">
       {/* Top Header */}
       <Header
         activeTab={activeTab}
@@ -292,6 +294,7 @@ export default function App() {
         onOpenBatch={() => setIsBatchModalOpen(true)}
         onOpenCostTracker={() => setIsCostTrackerOpen(true)}
         onOpenExport={() => setIsExportModalOpen(true)}
+        onOpenVercelDeploy={() => setIsVercelModalOpen(true)}
         simpleMode={simpleMode}
         setSimpleMode={setSimpleMode}
         promptOnlyMode={promptOnlyMode}
@@ -331,6 +334,7 @@ export default function App() {
             onCreateVariation={asset => setVariationAsset(asset)}
             onInspectVector={asset => setInspectVectorAsset(asset)}
             onOpenExport={() => setIsExportModalOpen(true)}
+            onRenderImage={handleRenderImage}
           />
         )}
 
@@ -415,26 +419,37 @@ export default function App() {
         />
       )}
 
+      {isVercelModalOpen && (
+        <VercelDeployModal
+          onClose={() => setIsVercelModalOpen(false)}
+        />
+      )}
+
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-neutral-900 border border-neutral-700 text-neutral-100 px-4 py-2.5 rounded-xl shadow-2xl text-xs font-medium flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2 duration-200">
+        <div className="fixed bottom-6 right-6 z-50 bg-slate-900 border border-slate-700 text-slate-100 px-4 py-2.5 rounded-xl shadow-2xl text-xs font-semibold flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2 duration-200">
           <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
           <span>{toastMessage}</span>
         </div>
       )}
 
       {/* Clean Footer */}
-      <footer className="border-t border-neutral-800/80 bg-neutral-950 py-6 px-6 text-xs text-neutral-500">
+      <footer className="border-t border-slate-800/80 bg-[#080C16] py-6 px-6 text-xs text-slate-500">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <span className="font-semibold text-neutral-400">Microstock Asset Lab</span>
+            <span className="font-bold text-slate-300">Microstock Asset Lab</span>
             <span>·</span>
-            <span>Built for commercial stock creators on Adobe Stock, Shutterstock & Getty</span>
+            <span>Production studio for Adobe Stock, Shutterstock &amp; Getty</span>
           </div>
-          <div className="flex items-center gap-4 text-neutral-400">
-            <span>RFC 4180 CSV Compliant</span>
+          <div className="flex items-center gap-4 text-slate-400">
+            <button
+              onClick={() => setIsVercelModalOpen(true)}
+              className="text-indigo-400 hover:text-indigo-300 font-semibold flex items-center gap-1 cursor-pointer transition-colors"
+            >
+              <span>▲ Panduan Deploy Vercel</span>
+            </button>
             <span>·</span>
-            <span>Pure Vector SVG Engine</span>
+            <span>RFC 4180 CSV</span>
             <span>·</span>
             <span>Stock-Safe IP Filter</span>
           </div>
